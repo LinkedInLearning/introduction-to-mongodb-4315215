@@ -14,14 +14,16 @@
     "brapifra.phpserver",
     "xdebug.php-debug",
     "bmewburn.vscode-intelephense-client",
-    "mrmlnc.vscode-apache"
+    "mrmlnc.vscode-apache",
+    "mongodb.mongodb-vscode"
   ],
   // For use with PHP or Apache (e.g.php -S localhost:8080 or apache2ctl start)
   "forwardPorts": [
     8080,
     27017
   ],
-  "onCreateCommand": "echo PS1='\"$ \"' >> ~/.bashrc", //Set Terminal Prompt to $
+
+  "onCreateCommand": "echo PS1='\"🌮 $ \"' >> ~/.bashrc", //Set Terminal Prompt
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
