@@ -2,8 +2,7 @@
 ARG VARIANT=8-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/php:0-${VARIANT}
 
-# Install MongoDB drivers
-
+# Install MongoDB PHP drivers
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && pecl install mongodb && docker-php-ext-enable mongodb \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
@@ -14,7 +13,9 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 
 RUN npm update && npm install mongodb@4.10
 
-RUN go get go.mongodb.org/mongo-driver/mongo
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt install -y golang-go \
+    && go get go.mongodb.org/mongo-driver/mongo
 
 RUN python -m pip install 'pymongo[srv]'
 
