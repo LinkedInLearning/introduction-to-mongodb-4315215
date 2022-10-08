@@ -14,10 +14,12 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 RUN npm update && npm install mongodb@4.10
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt install -y golang-go \
+    && apt -y install golang-go \
     && go get go.mongodb.org/mongo-driver/mongo
 
-RUN python -m pip install 'pymongo[srv]'
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt -y install python \
+    && python -m pip install 'pymongo[srv]'
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
