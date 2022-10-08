@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.233.0/containers/php-mariadb
 // Update the VARIANT arg in docker-compose.yml to pick a PHP version
 {
-  "name": "PHP & MariaDB (Community)",
+  "name": "MongoDB, PHP, Node.JS, Pyhton, Golang",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
@@ -19,7 +19,7 @@
   // For use with PHP or Apache (e.g.php -S localhost:8080 or apache2ctl start)
   "forwardPorts": [
     8080,
-    3306
+    27017
   ],
   "onCreateCommand": "echo PS1='\"$ \"' >> ~/.bashrc", //Set Terminal Prompt to $
   // Use 'postCreateCommand' to run commands after the container is created.

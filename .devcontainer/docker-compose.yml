@@ -29,19 +29,17 @@ services:
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
-  db:
-    image: mariadb:10.4
+  mongodb:
+    image: mongo@6.0
     restart: unless-stopped
     volumes:
-      - mariadb-data:/var/lib/mysql
+      - mongodb-data:/data/db
     environment:
-      MYSQL_ROOT_PASSWORD: mariadb
-      MYSQL_DATABASE: mariadb
-      MYSQL_USER: mariadb
-      MYSQL_PASSWORD: mariadb
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password123
 
-    # Add "forwardPorts": ["3306"] to **devcontainer.json** to forward MariaDB locally.
+    # Add "forwardPorts": ["27017"] to **devcontainer.json** to forward MongoDB locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
   
 volumes:
-  mariadb-data:
+  mongodb-data:
