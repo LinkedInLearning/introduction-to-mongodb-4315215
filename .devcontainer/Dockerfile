@@ -18,7 +18,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && go get go.mongodb.org/mongo-driver/mongo
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt -y install python3 \
+    && apt -y install python3 && apt install python3-pip \
     && python -m pip install 'pymongo[srv]'
 
 # [Optional] Uncomment this section to install additional OS packages.
