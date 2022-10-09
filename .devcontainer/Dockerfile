@@ -2,17 +2,29 @@
 ARG VARIANT=8-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/php:0-${VARIANT}
 
-# Install MariaDB client
+# Install MongoDB PHP drivers and enable extention
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y mariadb-client \ 
+    && pecl install mongodb && docker-php-ext-enable mongodb \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
-
-# Install php-mysql driver
-RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
+
+# Install Node.js drivers
+RUN npm update && npm install mongodb@4.10
+
+# Install Go and Go MongoDB drivers
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt -y install golang-go \
+    && go get go.mongodb.org/mongo-driver/mongo \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# Install Python and Python MongoDB drivers
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt -y install python3 && apt -y install python3-pip \
+    && python3 -m pip install 'pymongo[srv]' \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
