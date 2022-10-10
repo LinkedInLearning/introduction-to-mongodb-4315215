@@ -15,7 +15,9 @@
     "xdebug.php-debug",
     "bmewburn.vscode-intelephense-client",
     "mrmlnc.vscode-apache",
-    "mongodb.mongodb-vscode"
+    "mongodb.mongodb-vscode",
+    "ms-python.python",
+    "golang.Go"
   ],
   // For use with PHP or Apache (e.g.php -S localhost:8080 or apache2ctl start)
   "forwardPorts": [

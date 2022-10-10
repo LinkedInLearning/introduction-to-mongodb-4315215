@@ -18,6 +18,7 @@ RUN npm update && npm install mongodb@4.10
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt -y install golang-go \
     && go get go.mongodb.org/mongo-driver/mongo \
+    && go get -v golang.org/x/tools/gopls && go get -v github.com/ramya-rao-a/go-outline \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Install Python and Python MongoDB drivers
