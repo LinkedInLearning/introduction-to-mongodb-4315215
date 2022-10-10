@@ -3,9 +3,8 @@ ARG VARIANT=8-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/php:0-${VARIANT}
 
 # Install MongoDB PHP drivers and enable extention
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && pecl install mongodb && docker-php-ext-enable mongodb \
-    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && pecl install mongodb && docker-php-ext-enable mongodb
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
@@ -15,15 +14,13 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 RUN npm update && npm install mongodb@4.10
 
 # Install Go and Go MongoDB drivers
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt -y install golang-go \
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && sudo snap install go --classic \
     && go get go.mongodb.org/mongo-driver/mongo \
-    && go get -v golang.org/x/tools/gopls && go get -v github.com/ramya-rao-a/go-outline \
-    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# Install Python and Python MongoDB drivers
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt -y install python3 && apt -y install python3-pip \
+    # Install Python and Python MongoDB drivers
+    RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt -y install --no-install-recommends python3 && apt -y install python3-pip \
     && python3 -m pip install 'pymongo[srv]' \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
