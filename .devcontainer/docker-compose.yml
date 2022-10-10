@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
     volumes:
       - mongodb-data:/data/db
-    environment:
+    #environment:
       # Optional, turn on auth
       #- MONGO_INITDB_ROOT_USERNAME=root
       #- MONGO_INITDB_ROOT_PASSWORD=password123
