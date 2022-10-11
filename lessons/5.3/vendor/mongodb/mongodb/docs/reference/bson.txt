@@ -15,7 +15,7 @@ Overview
 
 MongoDB stores data records as BSON documents. BSON is a binary representation
 of :term:`JSON` documents, though it contains more data types than JSON. For the
-BSON spec, see `bsonspec.org <http://bsonspec.org/>`_.
+BSON spec, see `bsonspec.org <https://bsonspec.org/>`_.
 
 By default, the |php-library| returns BSON documents as
 :phpclass:`MongoDB\\Model\\BSONDocument` objects and BSON arrays as
@@ -199,9 +199,9 @@ The same document in the MongoDB shell might display as:
 Emulating the Legacy Driver
 ---------------------------
 
-The legacy :php:`mongo extension <mongo>` returned both BSON documents and
-arrays as PHP arrays. While PHP arrays are convenient to work with, this
-behavior was problematic:
+The legacy ``mongo`` extension returned both BSON documents and arrays as PHP
+arrays. While PHP arrays are convenient to work with, this behavior was
+problematic:
 
 - Different BSON types could deserialize to the same PHP value (e.g.
   ``{"0": "foo"}`` and ``["foo"]``), which made it impossible to infer the

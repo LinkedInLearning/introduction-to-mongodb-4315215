@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2015-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,13 +25,17 @@ use MongoDB\Driver\WriteConcern;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
 use MongoDB\Exception\UnsupportedException;
+
+use function array_key_exists;
 use function current;
 use function is_array;
 use function is_bool;
 use function is_integer;
 use function is_object;
+use function is_string;
 use function MongoDB\create_field_path_type_map;
 use function MongoDB\is_pipeline;
+use function MongoDB\is_write_concern_acknowledged;
 use function MongoDB\server_supports_feature;
 
 /**
@@ -41,21 +45,15 @@ use function MongoDB\server_supports_feature;
  * FindOneAndUpdate operation classes.
  *
  * @internal
- * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
+ * @see https://mongodb.com/docs/manual/reference/command/findAndModify/
  */
 class FindAndModify implements Executable, Explainable
 {
     /** @var integer */
-    private static $wireVersionForArrayFilters = 6;
+    private static $wireVersionForHint = 9;
 
     /** @var integer */
-    private static $wireVersionForCollation = 5;
-
-    /** @var integer */
-    private static $wireVersionForDocumentLevelValidation = 4;
-
-    /** @var integer */
-    private static $wireVersionForWriteConcern = 4;
+    private static $wireVersionForUnsupportedOptionServerSideError = 8;
 
     /** @var string */
     private $databaseName;
@@ -74,22 +72,24 @@ class FindAndModify implements Executable, Explainable
      *  * arrayFilters (document array): A set of filters specifying to which
      *    array elements an update should apply.
      *
-     *    This is not supported for server versions < 3.6 and will result in an
-     *    exception at execution time if used.
-     *
      *  * collation (document): Collation specification.
      *
-     *    This is not supported for server versions < 3.4 and will result in an
-     *    exception at execution time if used.
+     *  * comment (mixed): BSON value to attach as a comment to this command.
+     *
+     *    This is not supported for servers versions < 4.4.
      *
      *  * bypassDocumentValidation (boolean): If true, allows the write to
      *    circumvent document level validation.
      *
-     *    For servers < 3.2, this option is ignored as document level validation
-     *    is not available.
-     *
      *  * fields (document): Limits the fields to return for the matching
      *    document.
+     *
+     *  * hint (string|document): The index to use. Specify either the index
+     *    name as a string or the index key pattern as a document. If specified,
+     *    then the query system will only consider plans using the hinted index.
+     *
+     *    This is only supported on server versions >= 4.4. Using this option in
+     *    other contexts will result in an exception at execution time.
      *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
@@ -105,8 +105,6 @@ class FindAndModify implements Executable, Explainable
      *
      *  * session (MongoDB\Driver\Session): Client session.
      *
-     *    Sessions are not supported for server versions < 3.6.
-     *
      *  * sort (document): Determines which document the operation modifies if
      *    the query selects multiple documents.
      *
@@ -119,10 +117,12 @@ class FindAndModify implements Executable, Explainable
      *    matches the query. This option is ignored for remove operations. The
      *    default is false.
      *
-     *  * writeConcern (MongoDB\Driver\WriteConcern): Write concern.
+     *  * let (document): Map of parameter names and values. Values must be
+     *    constant or closed expressions that do not reference document fields.
+     *    Parameters can then be accessed as variables in an aggregate
+     *    expression context (e.g. "$$var").
      *
-     *    This is not supported for server versions < 3.2 and will result in an
-     *    exception at execution time if used.
+     *  * writeConcern (MongoDB\Driver\WriteConcern): Write concern.
      *
      * @param string $databaseName   Database name
      * @param string $collectionName Collection name
@@ -131,11 +131,7 @@ class FindAndModify implements Executable, Explainable
      */
     public function __construct($databaseName, $collectionName, array $options)
     {
-        $options += [
-            'new' => false,
-            'remove' => false,
-            'upsert' => false,
-        ];
+        $options += ['remove' => false];
 
         if (isset($options['arrayFilters']) && ! is_array($options['arrayFilters'])) {
             throw InvalidArgumentException::invalidType('"arrayFilters" option', $options['arrayFilters'], 'array');
@@ -153,11 +149,15 @@ class FindAndModify implements Executable, Explainable
             throw InvalidArgumentException::invalidType('"fields" option', $options['fields'], 'array or object');
         }
 
+        if (isset($options['hint']) && ! is_string($options['hint']) && ! is_array($options['hint']) && ! is_object($options['hint'])) {
+            throw InvalidArgumentException::invalidType('"hint" option', $options['hint'], ['string', 'array', 'object']);
+        }
+
         if (isset($options['maxTimeMS']) && ! is_integer($options['maxTimeMS'])) {
             throw InvalidArgumentException::invalidType('"maxTimeMS" option', $options['maxTimeMS'], 'integer');
         }
 
-        if (! is_bool($options['new'])) {
+        if (array_key_exists('new', $options) && ! is_bool($options['new'])) {
             throw InvalidArgumentException::invalidType('"new" option', $options['new'], 'boolean');
         }
 
@@ -189,8 +189,16 @@ class FindAndModify implements Executable, Explainable
             throw InvalidArgumentException::invalidType('"writeConcern" option', $options['writeConcern'], WriteConcern::class);
         }
 
-        if (! is_bool($options['upsert'])) {
+        if (array_key_exists('upsert', $options) && ! is_bool($options['upsert'])) {
             throw InvalidArgumentException::invalidType('"upsert" option', $options['upsert'], 'boolean');
+        }
+
+        if (isset($options['let']) && ! is_array($options['let']) && ! is_object($options['let'])) {
+            throw InvalidArgumentException::invalidType('"let" option', $options['let'], 'array or object');
+        }
+
+        if (isset($options['bypassDocumentValidation']) && ! $options['bypassDocumentValidation']) {
+            unset($options['bypassDocumentValidation']);
         }
 
         if (! (isset($options['update']) xor $options['remove'])) {
@@ -213,21 +221,24 @@ class FindAndModify implements Executable, Explainable
      * @param Server $server
      * @return array|object|null
      * @throws UnexpectedValueException if the command response was malformed
-     * @throws UnsupportedException if array filters, collation, or write concern is used and unsupported
+     * @throws UnsupportedException if hint or write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
     public function execute(Server $server)
     {
-        if (isset($this->options['arrayFilters']) && ! server_supports_feature($server, self::$wireVersionForArrayFilters)) {
-            throw UnsupportedException::arrayFiltersNotSupported();
+        /* Server versions >= 4.2.0 raise errors for unsupported update options.
+         * For previous versions, the CRUD spec requires a client-side error. */
+        if (isset($this->options['hint']) && ! server_supports_feature($server, self::$wireVersionForUnsupportedOptionServerSideError)) {
+            throw UnsupportedException::hintNotSupported();
         }
 
-        if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
-            throw UnsupportedException::collationNotSupported();
-        }
-
-        if (isset($this->options['writeConcern']) && ! server_supports_feature($server, self::$wireVersionForWriteConcern)) {
-            throw UnsupportedException::writeConcernNotSupported();
+        /* CRUD spec requires a client-side error when using "hint" with an
+         * unacknowledged write concern on an unsupported server. */
+        if (
+            isset($this->options['writeConcern']) && ! is_write_concern_acknowledged($this->options['writeConcern']) &&
+            isset($this->options['hint']) && ! server_supports_feature($server, self::$wireVersionForHint)
+        ) {
+            throw UnsupportedException::hintNotSupported();
         }
 
         $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
@@ -235,7 +246,7 @@ class FindAndModify implements Executable, Explainable
             throw UnsupportedException::writeConcernNotSupportedInTransaction();
         }
 
-        $cursor = $server->executeWriteCommand($this->databaseName, new Command($this->createCommandDocument($server)), $this->createOptions());
+        $cursor = $server->executeWriteCommand($this->databaseName, new Command($this->createCommandDocument()), $this->createOptions());
 
         if (isset($this->options['typeMap'])) {
             $cursor->setTypeMap(create_field_path_type_map($this->options['typeMap'], 'value'));
@@ -243,32 +254,43 @@ class FindAndModify implements Executable, Explainable
 
         $result = current($cursor->toArray());
 
-        return isset($result->value) ? $result->value : null;
+        return $result->value ?? null;
     }
 
+    /**
+     * Returns the command document for this operation.
+     *
+     * @see Explainable::getCommandDocument()
+     * @param Server $server
+     * @return array
+     */
     public function getCommandDocument(Server $server)
     {
-        return $this->createCommandDocument($server);
+        return $this->createCommandDocument();
     }
 
     /**
      * Create the findAndModify command document.
      *
-     * @param Server $server
      * @return array
      */
-    private function createCommandDocument(Server $server)
+    private function createCommandDocument()
     {
         $cmd = ['findAndModify' => $this->collectionName];
 
         if ($this->options['remove']) {
             $cmd['remove'] = true;
         } else {
-            $cmd['new'] = $this->options['new'];
-            $cmd['upsert'] = $this->options['upsert'];
+            if (isset($this->options['new'])) {
+                $cmd['new'] = $this->options['new'];
+            }
+
+            if (isset($this->options['upsert'])) {
+                $cmd['upsert'] = $this->options['upsert'];
+            }
         }
 
-        foreach (['collation', 'fields', 'query', 'sort'] as $option) {
+        foreach (['collation', 'fields', 'let', 'query', 'sort'] as $option) {
             if (isset($this->options[$option])) {
                 $cmd[$option] = (object) $this->options[$option];
             }
@@ -280,18 +302,10 @@ class FindAndModify implements Executable, Explainable
                 : (object) $this->options['update'];
         }
 
-        if (isset($this->options['arrayFilters'])) {
-            $cmd['arrayFilters'] = $this->options['arrayFilters'];
-        }
-
-        if (isset($this->options['maxTimeMS'])) {
-            $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
-        }
-
-        if (! empty($this->options['bypassDocumentValidation']) &&
-            server_supports_feature($server, self::$wireVersionForDocumentLevelValidation)
-        ) {
-            $cmd['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
+        foreach (['arrayFilters', 'bypassDocumentValidation', 'comment', 'hint', 'maxTimeMS'] as $option) {
+            if (isset($this->options[$option])) {
+                $cmd[$option] = $this->options[$option];
+            }
         }
 
         return $cmd;
@@ -300,7 +314,7 @@ class FindAndModify implements Executable, Explainable
     /**
      * Create options for executing the command.
      *
-     * @see http://php.net/manual/en/mongodb-driver-server.executewritecommand.php
+     * @see https://php.net/manual/en/mongodb-driver-server.executewritecommand.php
      * @return array
      */
     private function createOptions()

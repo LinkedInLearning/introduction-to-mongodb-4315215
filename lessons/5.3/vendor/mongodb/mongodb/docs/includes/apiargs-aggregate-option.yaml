@@ -3,8 +3,7 @@ name: allowDiskUse
 type: boolean
 description: |
   Enables writing to temporary files. When set to ``true``, aggregation stages
-  can write data to the ``_tmp`` sub-directory in the ``dbPath`` directory. The
-  default is ``false``.
+  can write data to the ``_tmp`` sub-directory in the ``dbPath`` directory.
 interface: phpmethod
 operation: ~
 optional: true
@@ -26,19 +25,6 @@ source:
 post: |
   This only applies when using the :ref:`$out <agg-out>` and
   :ref:`$out <agg-merge>` stages.
-
-  Document validation requires MongoDB 3.2 or later: if you are using an earlier
-  version of MongoDB, this option will be ignored.
----
-arg_name: option
-name: comment
-type: string
-description: |
-  Users can specify an arbitrary string to help trace the operation through the
-  database profiler, currentOp, and logs.
-interface: phpmethod
-operation: ~
-optional: true
 ---
 arg_name: option
 name: explain
