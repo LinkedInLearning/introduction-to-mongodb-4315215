@@ -11,6 +11,10 @@ RUN npm update && npm install mongodb@4.10
 
 # Install Go and Go MongoDB drivers
 RUN export DEBIAN_FRONTEND=noninteractive \
+    && curl -OL https://dl.google.com/go/go1.19.2.linux-amd64.tar.gz \
+    && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.19.2.linux-amd64.tar.gz \
+    && rm go1.19.2.linux-amd64.tar.gz \
+    && export PATH=$PATH:/usr/local/go/bin \
     && go get go.mongodb.org/mongo-driver/mongo
 
 # Install Python and Python MongoDB drivers
