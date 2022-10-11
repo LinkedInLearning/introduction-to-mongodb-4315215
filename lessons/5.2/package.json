@@ -5,9 +5,8 @@
   "main": "1-test.js",
   "dependencies": {
     "core-util-is": "^1.0.2",
-    "mongodb": "^3.5.9"
+    "mongodb": "4.10"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

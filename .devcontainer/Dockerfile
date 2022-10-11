@@ -12,10 +12,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get update \
     && apt-get install -y mongodb-mongosh mongodb-org-tools
 
-# Install Node.js drivers
-RUN npm update && npm install mongodb@4.10
-#apt -y install node-mongodb
-
 # Install Go and Go MongoDB drivers
 RUN export DEBIAN_FRONTEND=noninteractive \
     && curl -OL https://dl.google.com/go/go1.19.2.linux-amd64.tar.gz \
