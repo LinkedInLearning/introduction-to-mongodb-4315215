@@ -15,11 +15,11 @@ RUN npm update && npm install mongodb@4.10
 
 # Install Go and Go MongoDB drivers
 RUN export DEBIAN_FRONTEND=noninteractive \
-    && sudo snap install go --classic \
-    && go get go.mongodb.org/mongo-driver/mongo \
+    && snap install go --classic \
+    && go get go.mongodb.org/mongo-driver/mongo
 
-    # Install Python and Python MongoDB drivers
-    RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+# Install Python and Python MongoDB drivers
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt -y install --no-install-recommends python3 && apt -y install python3-pip \
     && python3 -m pip install 'pymongo[srv]' \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
