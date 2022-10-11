@@ -2,10 +2,6 @@
 ARG VARIANT=8-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/php:0-${VARIANT}
 
-# Install MongoDB PHP drivers and enable extention
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && pecl install mongodb && docker-php-ext-enable mongodb
-
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
@@ -15,7 +11,6 @@ RUN npm update && npm install mongodb@4.10
 
 # Install Go and Go MongoDB drivers
 RUN export DEBIAN_FRONTEND=noninteractive \
-    && snap install go --classic \
     && go get go.mongodb.org/mongo-driver/mongo
 
 # Install Python and Python MongoDB drivers
@@ -23,6 +18,10 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt -y install --no-install-recommends python3 && apt -y install python3-pip \
     && python3 -m pip install 'pymongo[srv]' \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# Install MongoDB PHP drivers and enable extention
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && pecl install mongodb && docker-php-ext-enable mongodb
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
