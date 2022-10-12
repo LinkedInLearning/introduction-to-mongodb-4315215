@@ -37,12 +37,12 @@ func main() {
 	collection := client.Database("cooker").Collection("recipes")
 
 	// search document
-	filter := bson.D{{"title", "Apple Pie"}}
+	filter := bson.D{{Key: "title", Value: "Apple Pie"}}
 
 	// query options
 	opts := options.Find()
 
-	opts.SetSort(bson.D{{"title", 1}})
+	opts.SetSort(bson.D{{Key: "title", Value: 1}})
 	opts.SetLimit(3)
 
 	cur, currErr := collection.Find(context, filter, opts)
