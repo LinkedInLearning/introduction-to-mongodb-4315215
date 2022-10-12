@@ -6,18 +6,23 @@ const db = 'cooker';
 
 console.log("Setting up mongo client");
 
-const client = new MongoClient(uri, { useUnifiedTopology: true});
+(async function () {
+  const client = new MongoClient(uri, { useUnifiedTopology: true });
 
-console.log("Connecting to database ...")
+  try {
+    console.log("Connecting to database ...")
 
-client.connect(function(err) {
-  assert.equal(null, err);
+    await client.connect();
 
-  console.log("Connected Successfully!");
+    console.log("Connected Successfully!");
 
-  const database = client.db(db);
+    const database = client.db(db);
 
-  console.log("The database name is: " + database.databaseName);
+    console.log("The database name is: " + database.databaseName);
 
-  client.close();
-});
+  } catch (err) {
+    console.log(err.stack);
+  }
+
+  await client.close();
+})();
