@@ -4,7 +4,7 @@ import pymongo
 import gridfs
 
 client = pymongo.MongoClient("localhost", 27017)
-import pymongo
+
 db = client.files
 fs = gridfs.GridFS(db)
 
