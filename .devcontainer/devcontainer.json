@@ -26,7 +26,7 @@
   ],
   "onCreateCommand": "echo PS1='\"🌮 \\W $ \"' >> ~/.bashrc", //Set Terminal Prompt
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "cd /workspaces/introduction-to-mongodb-4315215/.devcontainer/scripts/; sh post-create.sh",
+  "postCreateCommand": "/bin/bash ./.devcontainer/scripts/post-create.sh",
   // "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode"

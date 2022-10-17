@@ -1,1 +1,2 @@
-npm update && npm install mongodb@4.10
+DRIVER_VERSION = "4.10"
+cd /workspace; npm update && npm install mongodb@DRIVER_VERSION;
