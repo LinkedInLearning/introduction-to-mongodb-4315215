@@ -16,8 +16,7 @@
     "bmewburn.vscode-intelephense-client",
     "mrmlnc.vscode-apache",
     "mongodb.mongodb-vscode",
-    "ms-python.python",
-    "ms-azuretools.vscode-docker",
+    "ms-python.python",dock
     "golang.Go"
   ],
   // For use with PHP or Apache (e.g.php -S localhost:8080 or apache2ctl start)
