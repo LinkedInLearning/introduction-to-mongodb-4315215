@@ -15,6 +15,7 @@ services:
 
     volumes:
       - ..:/workspace:cached
+      - mongodb-data:/data/db
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
@@ -29,7 +30,7 @@ services:
 
   mongodb:
     image: mongo:6.0
-    command: --storageEngine wiredTiger --quiet
+    command: --quiet
     restart: unless-stopped
     volumes:
       - mongodb-data:/data/db
