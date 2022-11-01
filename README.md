@@ -6,13 +6,9 @@ This is the repository for the LinkedIn Learning course Introduction to MongoDB.
 ## Codespace
 This course includes a Github Codespace with MongoDB Server, shell, example data and each programming language used in the course pre-installed for you!
 
-If you are within the Codespace you can click this connection string and press enter!
-
-[mongodb://localhost:27017](mongodb://localhost:27017)
-
 Visit this repo on github.com and press the green **Code** button, then look at the **Codespaces** section.
 
-https://github.com/LinkedInLearning/introduction-to-mongodb-4315215
+Connection String: `mongodb://localhost:27017`
 
 ## Learning objectives
 - Installing MongoDB on Windows and macOS
