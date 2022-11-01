@@ -1,0 +1,5 @@
+// Select the database to use.
+use('cooker');
+
+// Find Tacos!
+db.recipes.find({"title": "Tacos"});
