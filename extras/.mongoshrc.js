@@ -1,4 +1,4 @@
-/* This mongoshrs files was created to clean up unnessicary warnings, etc.
+/* This .mongoshrc.js file was created to clean up unnessicary warnings, etc.
  when connecting to MongoDB. Feel free to customize this file but note it
  can break the shell if there is anything invalid.
  */
