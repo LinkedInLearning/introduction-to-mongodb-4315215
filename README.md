@@ -1,12 +1,9 @@
-# Introduction to MongoDB
-This is the repository for the LinkedIn Learning course Introduction to MongoDB. The full course is available from [LinkedIn Learning][lil-course-url].
+# Learning MongoDB
+This is the repository for the LinkedIn Learning course Learning MongoDB. The full course is available from [LinkedIn Learning][lil-course-url].
 
-<img src="https://cdn.lynda.com/course/2835008/2835008-1598381281629-16x9.jpg" width=50% height=25%>
+Excelling in an ever-changing software development world requires true "full stack" experience. Knowledge of nonrelational databases, in particular, adds exciting new capabilities and features that make everyday development easier, more streamlined, and vastly more scalable. This course provides an introduction on how to use MongoDB, one of the most popular nonrelational databases in the world. Discover how to create documents to store data, organize documents in collections, and write queries to read, update, and delete documents in MongoDB 5.0. Instructor Justin Jenkins shows how to properly index data to increase performance in MongoDB, as well as how to integrate MongoDB with applications in Python, PHP, Node.js, and Golang. Learn about basic server administration, including new content on replication, sharding, security, and backup procedures. Make sure to practice your newfound MongoDB skills using the challenge and solution sets issued along the way.
 
-## Codespace
-This course includes a Github Codespace with MongoDB Server, shell, example data and each programming language used in the course pre-installed for you!
-
-Visit this repo on github.com and press the green **Code** button, then look at the **Codespaces** section.
+This course is integrated with GitHub Codespaces, an instant cloud developer environment that offers all the functionality of your favorite IDE without the need for any local machine setup. With GitHub Codespaces, you can get hands-on practice from any machine, at any time—all while using a tool that you’ll likely encounter in the workplace. Check out the “Using GitHub Codespaces with this course” video to learn how to get started.
 
 Connection String: `mongodb://localhost:27017`
 
@@ -24,4 +21,16 @@ Connection String: `mongodb://localhost:27017`
 ## Desciption
 Excelling in an ever-changing software development world requires true "full stack" experience. Knowledge of nonrelational databases in particular adds exciting new capabilities and features that make everyday development easier, more streamlined, and vastly more scalable. This course provides an introduction to using MongoDB, one of the most popular nonrelational databases. Discover how to create documents to store data, organize documents in collections, and write queries to read, update, and delete documents. Instructor Justin Jenkins also shows how to properly index data to increase performance in MongoDB, and then shows how MongoDB can be integrated with applications written in Python, Node.js, and PHP. In the final chapter, he covers basic server administration, including replication, sharding, security, and backups. Make sure to practice your newfound MongoDB skills using the challenge and solution sets issued along the way.
 
+### Instructor
+
+Justin Jenkins 
+                            
+
+
+                            
+
+Check out my other courses on [LinkedIn Learning](https://www.linkedin.com/learning/instructors/justin-jenkins).
+
+[lil-course-url]: https://www.linkedin.com/learning/learning-mongodb-17360744?dApp=59033956
+[lil-thumbnail-url]: https://cdn.lynda.com/course/4315215/1671062548655?e=2147483647&v=beta&t=udSVb4L9vlajmg65vGmaYxzfONLyjjBFMFlDgcKR8zg-16x9.jpg
 [lil-course-url]: https://www.linkedin.com/learning/
