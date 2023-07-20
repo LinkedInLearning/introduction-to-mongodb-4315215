@@ -2,4 +2,7 @@
 use('cooker');
 
 // Find Tacos!
-db.recipes.find({"title": "Tacos"});
+//db.recipes.find({ "tags": { $all: ["easy", "mexican"]} }, { "title": 1, "tags": 1}).limit(2);
+//db.recipes.find({ "tags": { $in: ["easy", "mexican"] } }, { "title": 1, "tags": 1 }).limit(2);
+//db.recipes.find({"ingredients.name": "egg"}, {"title": 1})
+db.recipes.find({ "ingredients": { "name": "egg" } }, { "title": 1 })
