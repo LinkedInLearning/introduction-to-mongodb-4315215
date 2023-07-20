@@ -1,0 +1,14 @@
+// Select the database to use.
+use('cooker');
+
+// Find Tacos!
+//db.recipes.find({ "tags": { $all: ["easy", "mexican"]} }, { "title": 1, "tags": 1}).limit(2);
+//db.recipes.find({ "tags": { $in: ["easy", "mexican"] } }, { "title": 1, "tags": 1 }).limit(2);
+//db.recipes.find({"ingredients.name": "egg"}, {"title": 1})
+//db.examples.updateOne({ "title": "Pizza" }, { $set: { "title": "Thin crust pizza" } })
+//db.examples.find({ "title": "Thin crust pizza"})
+//db.examples.updateOne({ "title": "Thin crust pizza" }, { $set: { "vegan": false } })
+//db.examples.updateOne({ "title": "Thin crust pizza" }, { $unset: { "vegan": 1 } })
+//db.examples.find({ "title": "Tacos" }).pretty()
+//db.examples.updateOne({ "title": "Tacos" }, { $inc: { "likes_count": 1 } })
+db.examples.updateOne({ "title": "Tacos" }, { $inc: { "likes_count": -1 } })
